@@ -5,20 +5,20 @@ import (
 	"testing"
 )
 
-var testError = errors.New("test error")
-var testDontRetryError = errors.New("dont retry this error")
+var ErrTest = errors.New("test error")
+var ErrTestDontRetry = errors.New("dont retry this error")
 
 func errorForNCalls(n int) func() error {
 	i := 0
 	return func() error {
 		if n < 0 {
-			return testError
+			return ErrTest
 		}
 		i++
 		if i > n {
 			return nil
 		}
-		return testError
+		return ErrTest
 	}
 }
 
@@ -33,7 +33,7 @@ func TestRetryLimit(t *testing.T) {
 		},
 		Limit(5),
 	)
-	if err != testError {
+	if err != ErrTest {
 		t.Error("Unexpected error", err)
 	}
 	if runCount != 5 {
@@ -67,18 +67,18 @@ func TestErrorEvaluation(t *testing.T) {
 		func() error {
 			runCount++
 			if runCount < 3 {
-				return testError
+				return ErrTest
 			}
-			return testDontRetryError
+			return ErrTestDontRetry
 		},
 		func(err error) bool {
-			if err == testDontRetryError {
+			if err == ErrTestDontRetry {
 				return false
 			}
 			return true
 		},
 	)
-	if err != testDontRetryError {
+	if err != ErrTestDontRetry {
 		t.Error("Unexpected error", err)
 	}
 	if runCount != 3 {

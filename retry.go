@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// This takes
+// Do takes a function that can fail with a retry strategy for how to handle that failure
 func Do(
 	doer func() error,
 	retryStrategy func(error) bool,
@@ -21,12 +21,12 @@ func Do(
 	}
 }
 
-// Always can be used as a strategy to always try again when an error is received.
+// Always will continously retry until there is no error.
 func Always(_ error) bool {
 	return true
 }
 
-// Limit wraps a retry strategy to have a limit on retries
+// WithLimit wraps a retry strategy to have a limit on the amount of retries
 func WithLimit(
 	retryStrategy func(error) bool,
 	limit int,
@@ -45,6 +45,7 @@ func WithLimit(
 	}
 }
 
+// Limit is a helper function to always retry until a count is reached.
 func Limit(limit int) func(error) bool {
 	return WithLimit(Always, limit)
 }
@@ -65,7 +66,8 @@ func WithWait(
 }
 
 // WithExponentialBackoff wraps a retry strategy to wait between retries exponentially longer with each one.
-// It starts at the minimum and increases at a factor of 'n^2'. It also allows a range of jitter to be added to each one.
+// It starts at the minimum and increases at a factor of 'n^2'.
+// It also allows a range of jitter to be added to each one.
 func WithExponentialBackoff(
 	retryStrategy func(error) bool,
 	minimumWait time.Duration,

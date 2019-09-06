@@ -1,11 +1,10 @@
 # retry
 
-Just another go retry package
+Just another Go retry package
 
 ### Usage
-Call `retry.Do` with:
-    - The thing you want retried, it must be of signature `func() error`
-    - Some retry strategy `func(error) bool`. This is a way of determining what to do in the event of an error 
+
+Call `retry.Do` with: - The thing you want retried, it must be of signature `func() error` - Some retry strategy `func(error) bool`. This is a way of determining what to do in the event of an error
 
 ```
 var data []byte
@@ -17,6 +16,7 @@ err := retry.Do(func() error{
 ```
 
 #### Delay between attempts
+
 ```
 var data []byte
 err := retry.Do(func() error {
@@ -29,6 +29,7 @@ err := retry.Do(func() error {
 #### Custom retry strategies
 
 A retry strategy is simply `func(error) bool`
+
 ```
 var data []byte
 err := retry.Do(func() error {
